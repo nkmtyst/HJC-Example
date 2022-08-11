@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <title>DateShow</title>
+        <style>
+ul,li{
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+.row-line{
+    padding-bottom:1.25rem;
+    border-bottom:1px #456 solid;
+}
+
+#show{
+    border: none;
+    cursor: pointer;g
+    appearance: none;
+    transition: .25s;
+    margin: 0;
+    outline-offset: 2px;
+    font-weight: 600;
+    margin-top: 1.25rem;
+    font-size: 15px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    width: 80px;
+
+    background: #3ea8ff;
+    color:#fff;
+    border-radius:7px;
+}
+#show:hover{
+    background:#0f83fd;
+}
+#show:focus:not(:focus-visible) {
+    outline: 0;
+}
+#show:active{
+    background:#1f73ed;
+}
+
+table,tbody,tr,td{
+    box-sizing:border-box;
+}
+table{
+    margin-top:1.25rem;
+}
+#cldList td{
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border:1px #588 solid;
+    width:3rem;
+    height:100px;
+    padding:0px;
+    margin:0;
+    background:#eea;
+}
+#cldList td div{
+    box-sizing: border-box;
+    width:100%;
+    text-align: center;
+}
+
+.dateDiv{
+    top:0;
+    border-bottom:1px #333 solid;
+    padding:4px;
+    height:35%;
+    background:#fff;
+}
+.showDiv{
+    bottom:0px;
+    background:#456;
+}
+
+.type1 .showDiv.showBG{
+    background:#aa00ff;
+}
+.type2 .showDiv.showBG{
+    background:#3ea8ff;
+}
+.type3 .showDiv.showBG{
+    background:#88ffff;
+}
+.type4 .showDiv.showBG{
+    background:#00ff88;
+}
+
+
+        </style>
+        <script src="./datalist.js"></script>
+    </head>
+
+    <body>
+        <div>
+            <ul class="row-line">
+                <li>
+                    <label>番号</label>
+                    <span id="userNumber"></span>
+                </li>
+                <li>
+                    <label>氏名</label>
+                    <span id="userName"></span>
+                </li>
+            </ul>
+
+            <div class="row-line">
+
+                <button id="show" onClick="show()">show</button>
+            </div>
+
+
+            <table>
+                <tbody id="cldList">
+                </tbody>
+            </table>
+
+        </div>
+
+        <script>
+           var userNumber=document.getElementById("userNumber")
+           var userName=document.getElementById("userName")
+
+           userNumber.innerText="333"
+           userName.innerText="ららら"
+
+            var max=0;
+            var dataList=new Object();
+
+            //orgDataのtypeの意図は不明です、
+            //勝手に仕様の区別として使います。
+            orgDataList.map(function(item){
+                var di=dataList[item["date"]]||{"count":0,"type":"type"+item["type"],"height":0}
+                di["count"]++;
+                di["type"]="type"+item["type"];
+                max=di["count"]>max?di["count"]:max;
+                dataList[item["date"]]=di
+            })
+
+            function createTR(){
+                var tr=document.createElement("tr");
+                return tr
+            }
+
+            function createTD(key,di){
+
+                var dObj=new Date(parseInt(key))
+                var m=dObj.getMonth()+1
+                var d=dObj.getDate()
+
+                var dateText=document.createTextNode(m+"/"+d)
+
+                var dateDiv=document.createElement("div");
+                dateDiv.setAttribute("class","dateDiv")
+                dateDiv.appendChild(dateText)
+
+                var showDiv=document.createElement("div");
+                showDiv.setAttribute("class","showDiv")
+                showDiv.style.height=di["height"];
+
+                var td=document.createElement("td");
+                td.setAttribute("class",di["type"])
+                td.appendChild(dateDiv)
+                td.appendChild(showDiv)
+                return td
+            }
+
+
+            var cldList=document.getElementById("cldList")
+            var cldTR=createTR()
+            var tdmun=0
+            
+            for(var key in dataList){
+                var di=dataList[key]
+                var height=parseInt(di["count"]/max*65)
+                //showDivの最大高さはtdの65%
+
+                di["height"]=height+"%"
+                var td=createTD(key,di)
+                cldTR.appendChild(td)
+                tdmun++;
+                //行追加の場合
+                // 1行7セールの場合(0~6)
+                if(tdmun==7){
+                    cldList.appendChild(cldTR)
+                    cldTR=createTR()
+                    tdmun=0
+                }
+            }
+
+                //tdを合わせる
+                if(tdmun!=0){
+                    for(;tdmun<7;tdmun++){
+                        var td=document.createElement("td");
+                        cldTR.appendChild(td)
+                    }
+                }
+
+
+            cldList.appendChild(cldTR)
+
+
+            var showSwhit=false;
+
+            function show(){
+                var showDivList=document.querySelectorAll(".showDiv")
+
+                showDivList.forEach((el,index)=>{
+                    if(!showSwhit){
+                        el.classList.add("showBG")
+                    }else{
+                        el.classList.remove("showBG")
+                    }
+                })
+
+                var showBtn=document.getElementById("show")
+                if(!showSwhit){
+                    showBtn.innerText="close"
+                }else{
+                    showBtn.innerText="show"
+                }
+                showSwhit=!showSwhit
+            }
+
+        </script>
+
+    </body>
+</html>
