@@ -1,0 +1,176 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>課題2</title>
+        <script type="text/javascript" src="./logdata.js"></script>
+        <style>
+*{
+    box-sizing:border-box;
+}
+#coordinate{
+    position:relative;
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+    border: 2px #4d534d solid;
+    border-top: none;
+    border-right: none;
+}
+#coordinate::-webkit-scrollbar{
+    display:none;
+}
+
+div.unit{
+    display: inline-block;
+    vertical-align:bottom;
+    margin:0 2px;
+}
+
+div.unit span{
+    font-size:11px;
+    color: #ac8a8a;
+    font-weight: 700;
+}
+
+div.unit[data-day="0"] span{
+    color:red;
+}
+
+.unit .grap{
+    background: blue;
+    width:100%;
+}
+.eventBar{
+    margin:4px 0 6px 0;
+}
+
+.eventbar button,.eventbar label{
+    padding: 4px 8px;
+    margin:0 8px;
+}
+.eventBar select{
+    margin-bottom:16px;
+}
+        </style>
+    </head>
+
+    <body>
+        <ul>
+            <li>
+            学籍番号：<span id="studentID"></span>
+            </li>
+            <li>
+                氏名：<span id="studentName"></span>
+            </li>
+        </ul>
+        <hr>
+        <div class="eventBar">
+            <label>曜日切り替え</label>
+            <select onchange="showWeek(this)">
+                <option>全部</option>
+                <option value="0">日曜日</option>
+                <option value="1">月曜日</option>
+                <option value="2">火曜日</option>
+                <option value="3">水曜日</option>
+                <option value="4">木曜日</option>
+                <option value="5">金曜日</option>
+                <option value="6">土曜日</option>
+            </select>
+            <br>
+            <button onClick="show(0)">show all</button>
+            <button onClick="show(1)">商品1</button>
+            <button onClick="show(2)">商品2</button>
+            <button onClick="show(3)">商品3</button>
+            <button onClick="show(4)">商品4</button>
+            <button onClick="show(5)">商品5</button>
+        </div>
+        <div id="coordinate">
+        </div>
+
+        <script>
+            //let keys=new Array()
+            let week=['日','月','火','水','木','金','土']
+            let list=new Array()
+            let max=0;
+            function appendUnit(k,d){
+                let unit=document.createElement('div')
+                let span=document.createElement('span')
+                let div=document.createElement('div')
+                unit.classList.add("unit")
+                unit.setAttribute("data-day",d.day)
+                span.innerText=d.date
+                unit.appendChild(span)
+                div.setAttribute("id",k)
+                div.classList.add("grap")
+                unit.appendChild(div)
+                document.getElementById("coordinate").appendChild(unit)
+            }
+
+            function init(){
+                let dateList=new Array()
+                let i
+                for(i=0;i<dataSet.length;i++){
+                    if(!dateList[dataSet[i].date] || !dateList[dataSet[i].date].date){
+                        let obj=new Object()
+                        let tdate=new Date(dataSet[i].date)
+                        let m=tdate.getMonth()+1
+                        let d=tdate.getDate()
+                        obj.day=tdate.getDay()
+                        obj.date=m>9?m:"0"+m
+                        obj.date+="/"
+                        obj.date+=d>9?d:"0"+d
+                        obj.date+="("+week[obj.day]+")"
+                        dateList[dataSet[i].date]=obj
+                        dateList[dataSet[i].date]["type0"]=0
+                    }
+
+                    if(!dateList[dataSet[i].date]["type"+dataSet[i].type]){
+                        dateList[dataSet[i].date]["type"+dataSet[i].type]=0
+                    } 
+                    dateList[dataSet[i].date]["type"+dataSet[i].type]++
+                    dateList[dataSet[i].date]["type0"]++
+                    if(dateList[dataSet[i].date]["type0"]>max){
+                        max=dateList[dataSet[i].date]["type0"]
+                    }
+                }
+                let keys=Object.keys(dateList).sort()
+                for(var k of keys){
+                    list[k]=dateList[k]
+                    appendUnit(k,list[k])
+                }
+                console.log(max)
+            }
+
+            function show(n){
+                let type="type"+n
+                for(var k in list){
+                    let grap=document.getElementById(k)
+                    let height=list[k][type]
+                    grap.style.height=(250/max)*height+"px"
+                }
+            }
+
+            function showWeek(obj){
+                let index=obj.selectedIndex
+                let day=obj.options[index].value
+
+                for(var k in list){
+                    let unit=document.getElementById(k).parentNode
+                    if(index>0 && day!=list[k].day){
+                        unit.style.display="none"
+                    }else{
+                        unit.style.display="inline-block"
+                    }
+                }
+            }
+
+            document.getElementById("studentID").innerText="myNumber"
+            document.getElementById("studentName").innerText="myName"
+
+            init()
+
+        </script>
+    </body>
+
+</html>
