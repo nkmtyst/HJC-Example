@@ -61,7 +61,7 @@ div.unit[data-day="0"] span{
             学籍番号：<span id="studentID"></span>
             </li>
             <li>
-                氏名：<span id="studentName"></span>
+            氏名：<span id="studentName"></span>
             </li>
         </ul>
         <hr>
@@ -89,7 +89,6 @@ div.unit[data-day="0"] span{
         </div>
 
         <script>
-            //let keys=new Array()
             let week=['日','月','火','水','木','金','土']
             let list=new Array()
             let max=0;
@@ -109,8 +108,7 @@ div.unit[data-day="0"] span{
 
             function init(){
                 let dateList=new Array()
-                let i
-                for(i=0;i<dataSet.length;i++){
+                for(let i=0;i<dataSet.length;i++){
                     if(!dateList[dataSet[i].date] || !dateList[dataSet[i].date].date){
                         let obj=new Object()
                         let tdate=new Date(dataSet[i].date)
@@ -135,16 +133,16 @@ div.unit[data-day="0"] span{
                     }
                 }
                 let keys=Object.keys(dateList).sort()
-                for(var k of keys){
+                for(let k of keys){
                     list[k]=dateList[k]
                     appendUnit(k,list[k])
                 }
-                console.log(max)
+                //console.log(max)
             }
 
             function show(n){
                 let type="type"+n
-                for(var k in list){
+                for(let k in list){
                     let grap=document.getElementById(k)
                     let height=list[k][type]
                     grap.style.height=(250/max)*height+"px"
@@ -155,7 +153,7 @@ div.unit[data-day="0"] span{
                 let index=obj.selectedIndex
                 let day=obj.options[index].value
 
-                for(var k in list){
+                for(let k in list){
                     let unit=document.getElementById(k).parentNode
                     if(index>0 && day!=list[k].day){
                         unit.style.display="none"
@@ -167,8 +165,7 @@ div.unit[data-day="0"] span{
 
             document.getElementById("studentID").innerText="myNumber"
             document.getElementById("studentName").innerText="myName"
-
-            init()
+            init() 
 
         </script>
     </body>
